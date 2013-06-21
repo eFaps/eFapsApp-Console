@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><!--
+
+  Copyright 2003 - 2013 The eFaps Team
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+
+  Author:          The eFaps Team
+  Revision:        $Rev: 9666 $
+  Last Changed:    $Date: 2013-06-20 10:16:32 -0500 (jue, 20 jun 2013) $
+  Last Changed By: $Author: jan@moxter.net $
+
+--><ui-form xmlns="http://www.efaps.org/xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
+    <uuid>e11e64f6-d5a8-4123-98bb-071d5f428476</uuid>
+    <file-application>eFapsApp-Console</file-application>
+    <file-revision>$Rev: 9666 $</file-revision>
+    <definition>
+        <version-expression>(version==latest)</version-expression>
+        <name>Console_ExecuteEsjpForm</name>
+        <!-- fields -->
+        <field character="Group" name="currencyGroup">
+            <property name="GroupCount">2</property>
+            <property name="ModeCreate">READONLY</property>
+        </field>
+        <field name="instance">
+            <property name="Label">Console_ExecuteEsjpForm.instance.Label</property>
+            <property name="ModeCreate">EDITABLE</property>
+            <property name="ClassNameUI">org.efaps.admin.datamodel.ui.StringUI</property>
+        </field>
+        <field name="updateButton" character="Command">
+            <property name="Label">Console_ExecuteEsjpForm.updateButton.Label</property>
+            <property name="ModeCreate">READONLY</property>
+            <property name="CmdIcon">ACCEPT</property>
+            <trigger program="org.efaps.esjp.console.ExecuteEsjp"
+                method="executeEsjp"
+                name="Console_ExecuteEsjpForm.updateButton.UI_FIELD_CMD"
+                event="UI_FIELD_CMD">
+            </trigger>
+        </field>
+        <field name="esjp">
+            <property name="Label">Console_ExecuteEsjpForm.esjp.Label</property>
+            <property name="ModeCreate">EDITABLE</property>
+            <property name="ClassNameUI">org.efaps.admin.datamodel.ui.StringUI</property>
+            <property name="Columns">80</property>
+            <trigger program="org.efaps.esjp.console.ExecuteEsjp"
+                    method="autoComplete4Program"
+                    name="Console_ExecuteEsjpForm.instance.UI_FIELD_AUTOCOMPLETE"
+                    event="UI_FIELD_AUTOCOMPLETE">
+                <property name="Type01">Admin_Program_JavaClass</property>
+            </trigger>
+        </field>
+        <field name="method">
+            <property name="Label">Console_ExecuteEsjpForm.method.Label</property>
+            <property name="ModeCreate">EDITABLE</property>
+            <property name="ClassNameUI">org.efaps.admin.datamodel.ui.StringUI</property>
+            <property name="Columns">50</property>
+        </field>
+    </definition>
+</ui-form>

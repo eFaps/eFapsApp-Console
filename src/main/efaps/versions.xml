@@ -34,5 +34,13 @@
     </dependencies>
     <version number="1" reloadCache="false" login="true" compile="true">
         <description>Install Console App.</description>
+        <script type="groovy">
+            import org.efaps.esjp.admin.ui.UIUpdate;
+
+            UIUpdate update = new UIUpdate();
+
+            <!-- Console_MyDesk, Admin_Common_MyDesk -->
+            update.add2Menu("ef23d0a3-a812-408e-a301-a7dd8d9d4872", "8d9aae87-fa36-4b62-aba0-dbd9c0ca273a", 1);
+        </script>
     </version>
 </install>

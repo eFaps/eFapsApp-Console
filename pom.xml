@@ -133,7 +133,7 @@
                     <passWord>Administrator</passWord>
                     <!-- used from the generateUUID goal -->
                     <count>${count}</count>
-                    <ciName>CI</ciName>
+                    <ciName>Console</ciName>
                 </configuration>
                 <dependencies>
                     <!-- Connection Pooling -->
@@ -150,7 +150,7 @@
     <dependencies>
         <dependency>
             <groupId>org.efaps</groupId>
-            <artifactId>efaps-kernel-install</artifactId>
+            <artifactId>efaps-webapp-install</artifactId>
             <version>${efaps.app.dependencies}</version>
         </dependency>
     </dependencies>
