@@ -42,6 +42,8 @@ import org.efaps.esjp.ci.CIFormConsole;
 import org.efaps.esjp.common.uitable.MultiPrint;
 import org.efaps.ui.wicket.util.EFapsKey;
 import org.efaps.util.EFapsException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * TODO comment!
@@ -54,6 +56,8 @@ import org.efaps.util.EFapsException;
 @EFapsRevision("$Rev: 9669 $")
 public class ExecuteEsjp_Base
 {
+    protected static final Logger LOG = LoggerFactory.getLogger(ExecuteEsjp.class);
+
     public Return executeEsjp(final Parameter _parameter)
         throws EFapsException
     {
@@ -63,6 +67,10 @@ public class ExecuteEsjp_Base
 
         final String esjp = _parameter.getParameterValue(CIFormConsole.Console_ExecuteEsjpForm.esjp.name);
         final String methodStr = _parameter.getParameterValue(CIFormConsole.Console_ExecuteEsjpForm.method.name);
+        if (ExecuteEsjp.LOG.isDebugEnabled()) {
+            ExecuteEsjp.LOG.debug("Esjp: {}\n Method: {}\n ",
+                            new Object[] { esjp, methodStr });
+        }
         try {
             final Class<?> clazz = Class.forName(esjp);
             final Method method = clazz.getMethod(methodStr, new Class[] { Parameter.class });
