@@ -32,7 +32,6 @@ import org.efaps.admin.event.Parameter;
 import org.efaps.admin.event.Parameter.ParameterValues;
 import org.efaps.admin.event.Return;
 import org.efaps.admin.event.Return.ReturnValues;
-import org.efaps.admin.program.esjp.EFapsClassLoader;
 import org.efaps.admin.program.esjp.EFapsRevision;
 import org.efaps.admin.program.esjp.EFapsUUID;
 import org.efaps.ci.CIAdminProgram;
@@ -55,8 +54,6 @@ import org.efaps.util.EFapsException;
 @EFapsRevision("$Rev: 9669 $")
 public class ExecuteEsjp_Base
 {
-    protected static final EFapsClassLoader CLASSLOADER =  new EFapsClassLoader(ExecuteEsjp.class.getClassLoader());
-
     public Return executeEsjp(final Parameter _parameter)
         throws EFapsException
     {
@@ -104,16 +101,16 @@ public class ExecuteEsjp_Base
                 throws EFapsException
             {
                 final String input = (String) _parameter.get(ParameterValues.OTHERS);
-                _queryBldr.addWhereAttrMatchValue(CIAdminProgram.JavaClass.Name, input + "*").setIgnoreCase(true);
+                _queryBldr.addWhereAttrMatchValue(CIAdminProgram.Abstract.Name, input + "*").setIgnoreCase(true);
 
             };
         }.getInstances(_parameter);
 
         final MultiPrintQuery multi = new MultiPrintQuery(instances);
-        multi.addAttribute(CIAdminProgram.JavaClass.Name);
+        multi.addAttribute(CIAdminProgram.Abstract.Name);
         multi.execute();
         while (multi.next()) {
-            final String name = multi.<String>getAttribute(CIAdminProgram.JavaClass.Name);
+            final String name = multi.<String>getAttribute(CIAdminProgram.Abstract.Name);
             final Map<String, String> map = new HashMap<String, String>();
             map.put(EFapsKey.AUTOCOMPLETE_KEY.getKey(), name);
             map.put(EFapsKey.AUTOCOMPLETE_VALUE.getKey(), name);

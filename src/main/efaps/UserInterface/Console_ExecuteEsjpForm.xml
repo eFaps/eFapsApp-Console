@@ -55,7 +55,7 @@
                     method="autoComplete4Program"
                     name="Console_ExecuteEsjpForm.instance.UI_FIELD_AUTOCOMPLETE"
                     event="UI_FIELD_AUTOCOMPLETE">
-                <property name="Type01">Admin_Program_JavaClass</property>
+                <property name="Type01">Admin_Program_Java</property>
             </trigger>
         </field>
         <field name="method">
