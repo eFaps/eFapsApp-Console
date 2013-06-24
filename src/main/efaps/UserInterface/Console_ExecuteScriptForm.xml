@@ -32,9 +32,15 @@
             <property name="ModeCreate">READONLY</property>
         </field>
         <field name="types">
-            <property name="Label">Console_ExecuteScriptForm.instance.Label</property>
+            <property name="Label">Console_ExecuteScriptForm.types.Label</property>
             <property name="ModeCreate">EDITABLE</property>
-            <property name="ClassNameUI">org.efaps.admin.datamodel.ui.StringUI</property>
+            <trigger program="org.efaps.esjp.console.ExecuteEsjp"
+                    method="dropDown4Scripts"
+                    name="Console_ExecuteScriptForm.types.UI_FIELD_VALUE"
+                    event="UI_FIELD_VALUE">
+                <property name="Option01">Groovy</property>
+                <property name="Option02">Rhino</property>
+            </trigger>
         </field>
         <field character="Command" name="updateButton">
             <property name="Label">Console_ExecuteScriptForm.updateButton.Label</property>
