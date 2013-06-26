@@ -26,6 +26,9 @@
     <definition>
         <version-expression>(version==latest)</version-expression>
         <name>Console_MyDesk</name>
+        <access>
+            <role>Administration</role>
+        </access>
         <childs>
             <child>Console_MyDesk_ExecuteEsjp</child>
             <child>Console_MyDesk_ExecuteScript</child>
