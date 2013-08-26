@@ -19,7 +19,9 @@
   Last Changed:    $Date: 2013-06-20 10:16:32 -0500 (jue, 20 jun 2013) $
   Last Changed By: $Author: jan@moxter.net $
 
---><ui-form xmlns="http://www.efaps.org/xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
+-->
+<ui-form xmlns="http://www.efaps.org/xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
     <uuid>e11e64f6-d5a8-4123-98bb-071d5f428476</uuid>
     <file-application>eFapsApp-Console</file-application>
     <file-revision>$Rev: 9666 $</file-revision>
@@ -52,9 +54,9 @@
             <property name="ClassNameUI">org.efaps.admin.datamodel.ui.StringUI</property>
             <property name="Columns">80</property>
             <trigger program="org.efaps.esjp.console.ExecuteEsjp"
-                    method="autoComplete4Program"
-                    name="Console_ExecuteEsjpForm.instance.UI_FIELD_AUTOCOMPLETE"
-                    event="UI_FIELD_AUTOCOMPLETE">
+                method="autoComplete4Program"
+                name="Console_ExecuteEsjpForm.instance.UI_FIELD_AUTOCOMPLETE"
+                event="UI_FIELD_AUTOCOMPLETE">
                 <property name="Type01">Admin_Program_Java</property>
             </trigger>
         </field>
@@ -63,6 +65,13 @@
             <property name="ModeCreate">EDITABLE</property>
             <property name="ClassNameUI">org.efaps.admin.datamodel.ui.StringUI</property>
             <property name="Columns">50</property>
+        </field>
+        <field name="parameters" character="Target">
+            <property name="ModeCreate">EDITABLE</property>
+            <table>Console_ParameterTable</table>
+            <evaluate program="org.efaps.esjp.common.uitable.MultiPrint">
+                <property name="Type">Admin_DataModel_Dimension</property>
+            </evaluate>
         </field>
     </definition>
 </ui-form>
