@@ -30,13 +30,13 @@
     <definition>
         <version-expression>(version==latest)</version-expression>
         <name>Console_ParameterTable</name>
-        <field name="key">
+        <field name="keyField">
             <property name="ModeCreate">EDITABLE</property>
             <property name="ClassNameUI">org.efaps.admin.datamodel.ui.StringUI</property>
             <property name="Label">Console_ParameterTable.key.Label</property>
             
         </field>
-        <field name="value">
+        <field name="valueField">
             <property name="ModeCreate">EDITABLE</property>
             <property name="ClassNameUI">org.efaps.admin.datamodel.ui.StringUI</property>
             <property name="Label">Console_ParameterTable.value.Label</property>
