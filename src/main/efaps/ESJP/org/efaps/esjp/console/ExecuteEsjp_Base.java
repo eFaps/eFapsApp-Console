@@ -139,8 +139,7 @@ public class ExecuteEsjp_Base
     public Return executeScript(final Parameter _parameter)
         throws InstallationException
     {
-        final ClassLoader parent = getClass().getClassLoader();
-        final EFapsClassLoader efapsClassLoader = new EFapsClassLoader(parent);
+        final EFapsClassLoader efapsClassLoader = EFapsClassLoader.getInstance();
         final CompilerConfiguration config = new CompilerConfiguration();
         final GroovyClassLoader loader = new GroovyClassLoader(efapsClassLoader, config);
         final Script script = getScript(_parameter);
