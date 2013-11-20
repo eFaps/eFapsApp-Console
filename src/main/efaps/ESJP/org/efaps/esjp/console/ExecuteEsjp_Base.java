@@ -22,7 +22,8 @@ package org.efaps.esjp.console;
 
 import groovy.lang.GroovyClassLoader;
 
-import java.lang.reflect.InvocationTargetException;
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -31,6 +32,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.TreeMap;
 
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.codehaus.groovy.control.CompilerConfiguration;
 import org.efaps.admin.event.Parameter;
 import org.efaps.admin.event.Parameter.ParameterValues;
@@ -68,36 +70,38 @@ public class ExecuteEsjp_Base
     public Return executeEsjp(final Parameter _parameter)
         throws EFapsException
     {
+        final StringBuilder snipplet = new StringBuilder();
+        snipplet.append("document.getElementsByName('").append(CIFormConsole.Console_ExecuteEsjpForm.returnValue.name)
+                        .append("')[0].innerHTML=\"");
+        final Return ret = new Return();
         final Instance instance = Instance.get(_parameter
                         .getParameterValue(CIFormConsole.Console_ExecuteEsjpForm.instance.name));
         _parameter.put(ParameterValues.INSTANCE, instance);
 
         final String esjp = _parameter.getParameterValue(CIFormConsole.Console_ExecuteEsjpForm.esjp.name);
         final String methodStr = _parameter.getParameterValue(CIFormConsole.Console_ExecuteEsjpForm.method.name);
-        if (ExecuteEsjp.LOG.isDebugEnabled()) {
-            ExecuteEsjp.LOG.debug("Esjp: {}\n Method: {}\n ",
+        if (ExecuteEsjp_Base.LOG.isDebugEnabled()) {
+            ExecuteEsjp_Base.LOG.debug("Esjp: {}\n Method: {}\n ",
                             new Object[] { esjp, methodStr });
         }
         try {
             final Class<?> clazz = Class.forName(esjp);
             final Method method = clazz.getMethod(methodStr, new Class[] { Parameter.class });
             method.invoke(clazz.newInstance(), _parameter);
-        } catch (final ClassNotFoundException e) {
-            throw new EFapsException(ExecuteEsjp_Base.class, "execute.ClassNotFoundException", e);
-        } catch (final NoSuchMethodException e) {
-            throw new EFapsException(ExecuteEsjp_Base.class, "execute.NoSuchMethodException", e);
-        } catch (final SecurityException e) {
-            throw new EFapsException(ExecuteEsjp_Base.class, "execute.SecurityException", e);
-        } catch (final InstantiationException e) {
-            throw new EFapsException(ExecuteEsjp_Base.class, "execute.InstantiationException", e);
-        } catch (final IllegalAccessException e) {
-            throw new EFapsException(ExecuteEsjp_Base.class, "execute.IllegalAccessException", e);
-        } catch (final IllegalArgumentException e) {
-            throw new EFapsException(ExecuteEsjp_Base.class, "execute.IllegalArgumentException", e);
-        } catch (final InvocationTargetException e) {
-            throw new EFapsException(ExecuteEsjp_Base.class, "execute.InvocationTargetException", e);
+        } catch (final Exception e) {
+            ExecuteEsjp_Base.LOG.error("Catched:", e);
+            final ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            final PrintStream ps = new PrintStream(baos);
+            e.printStackTrace(ps);
+            String content = baos.toString();
+            content =  content.replace("\n", "<br/>");
+            content =  content.replace("\t", "&nbsp;&nbsp;&nbsp;&nbsp;");
+            snipplet.append(StringEscapeUtils.escapeEcmaScript(content.substring(0, content.length() > 5000 ? 5000
+                            : content.length())));
         }
-        return new Return();
+        snipplet.append("\";");
+        ret.put(ReturnValues.SNIPLETT, snipplet.toString());
+        return ret;
     }
 
     public Return autoComplete4Program(final Parameter _parameter)

@@ -66,6 +66,11 @@
             <property name="ClassNameUI">org.efaps.admin.datamodel.ui.StringUI</property>
             <property name="Columns">50</property>
         </field>
+        <field name="returnValue">
+            <property name="Label">Console_ExecuteEsjpForm.returnValue.Label</property>
+            <property name="ModeCreate">READONLY</property>
+            <property name="ClassNameUI">org.efaps.admin.datamodel.ui.StringUI</property>
+        </field>
         <field name="parameters" character="Target">
             <property name="ModeCreate">EDITABLE</property>
             <table>Console_ParameterTable</table>
