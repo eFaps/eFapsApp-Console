@@ -20,7 +20,9 @@
 
 package org.efaps.esjp.console;
 
-import groovy.lang.GroovyClassLoader;
+import groovy.lang.Binding;
+import groovy.lang.GroovyShell;
+import groovy.lang.Script;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
@@ -33,7 +35,6 @@ import java.util.Map.Entry;
 import java.util.TreeMap;
 
 import org.apache.commons.lang3.StringEscapeUtils;
-import org.codehaus.groovy.control.CompilerConfiguration;
 import org.efaps.admin.event.Parameter;
 import org.efaps.admin.event.Parameter.ParameterValues;
 import org.efaps.admin.event.Return;
@@ -42,6 +43,7 @@ import org.efaps.admin.program.esjp.EFapsClassLoader;
 import org.efaps.admin.program.esjp.EFapsRevision;
 import org.efaps.admin.program.esjp.EFapsUUID;
 import org.efaps.ci.CIAdminProgram;
+import org.efaps.db.Context;
 import org.efaps.db.Instance;
 import org.efaps.db.MultiPrintQuery;
 import org.efaps.db.QueryBuilder;
@@ -49,7 +51,6 @@ import org.efaps.esjp.ci.CIFormConsole;
 import org.efaps.esjp.common.uiform.Field;
 import org.efaps.esjp.common.uitable.MultiPrint;
 import org.efaps.ui.wicket.util.EFapsKey;
-import org.efaps.update.util.InstallationException;
 import org.efaps.util.EFapsException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -65,7 +66,8 @@ import org.slf4j.LoggerFactory;
 @EFapsRevision("$Rev: 9669 $")
 public class ExecuteEsjp_Base
 {
-    protected static final Logger LOG = LoggerFactory.getLogger(ExecuteEsjp.class);
+
+    private static final Logger LOG = LoggerFactory.getLogger(ExecuteEsjp.class);
 
     public Return executeEsjp(final Parameter _parameter)
         throws EFapsException
@@ -94,8 +96,8 @@ public class ExecuteEsjp_Base
             final PrintStream ps = new PrintStream(baos);
             e.printStackTrace(ps);
             String content = baos.toString();
-            content =  content.replace("\n", "<br/>");
-            content =  content.replace("\t", "&nbsp;&nbsp;&nbsp;&nbsp;");
+            content = content.replace("\n", "<br/>");
+            content = content.replace("\t", "&nbsp;&nbsp;&nbsp;&nbsp;");
             snipplet.append(StringEscapeUtils.escapeEcmaScript(content.substring(0, content.length() > 5000 ? 5000
                             : content.length())));
         }
@@ -110,6 +112,7 @@ public class ExecuteEsjp_Base
         final Map<String, Map<String, String>> tmpMap = new TreeMap<String, Map<String, String>>();
         final List<Instance> instances = new MultiPrint()
         {
+
             @Override
             protected void add2QueryBldr(final Parameter _parameter,
                                          final QueryBuilder _queryBldr)
@@ -141,42 +144,24 @@ public class ExecuteEsjp_Base
     }
 
     public Return executeScript(final Parameter _parameter)
-        throws InstallationException
+        throws EFapsException
     {
         final EFapsClassLoader efapsClassLoader = EFapsClassLoader.getInstance();
-        final CompilerConfiguration config = new CompilerConfiguration();
-        final GroovyClassLoader loader = new GroovyClassLoader(efapsClassLoader, config);
-        final Script script = getScript(_parameter);
-        if (script != null && script.getCode() != null) {
-            final Class<?> clazz = loader.parseClass(script.getCode());
-            groovy.lang.Script go;
-            try {
-                go = (groovy.lang.Script) clazz.newInstance();
-
-                final Object[] args = {};
-                go.invokeMethod("run", args);
-
-            } catch (final InstantiationException e) {
-                throw new InstallationException("InstantiationException in Groovy", e);
-            } catch (final IllegalAccessException e) {
-                throw new InstallationException("IllegalAccessException in Groovy", e);
-            }
-        }
-
-        return new Return();
-    }
-
-    protected Script getScript(final Parameter _parameter)
-    {
         final String option = _parameter.getParameterValue(CIFormConsole.Console_ExecuteScriptForm.types.name);
         final String code = _parameter.getParameterValue(CIFormConsole.Console_ExecuteScriptForm.script.name);
-        Script script = null;
-        if ("Groovy".equals(option)) {
-            script = new Script(code, null, null);
-        } else if ("Rhino".equals(option)) {
-
+        if (code != null) {
+            if ("Groovy".equals(option)) {
+                final Binding binding = new Binding();
+                binding.setVariable("EFAPS_LOGGER", LOG);
+                binding.setVariable("EFAPS_USERNAME", Context.getThreadContext().getPerson().getName());
+                final GroovyShell shell = new GroovyShell(efapsClassLoader, binding);
+                final Script script = shell.parse(code);
+                script.run();
+            } else {
+                // TODO
+            }
         }
-        return script;
+        return new Return();
     }
 
     public Return dropDown4Scripts(final Parameter _parameter)
@@ -184,6 +169,7 @@ public class ExecuteEsjp_Base
     {
         return new Field()
         {
+
             @Override
             public Return dropDownFieldValue(final Parameter _parameter)
                 throws EFapsException
@@ -204,68 +190,4 @@ public class ExecuteEsjp_Base
         }.dropDownFieldValue(_parameter);
     }
 
-    private class Script
-    {
-
-        /**
-         * Script code to execute.
-         */
-        private final String code;
-
-        /**
-         * File name of the script (within the class path).
-         */
-        private final String fileName;
-
-        /**
-         * Name of called function.
-         */
-        private final String function;
-
-        /**
-         * Constructor to initialize a script.
-         *
-         * @param _code         script code
-         * @param _fileName     script file name
-         * @param _function     called function name
-         */
-        private Script(final String _code,
-                               final String _fileName,
-                               final String _function)
-        {
-            this.code = (_code == null) || ("".equals(_code.trim())) ? null : _code.trim();
-            this.fileName = _fileName;
-            this.function = _function;
-        }
-
-        /**
-         * Getter method for instance variable {@link #code}.
-         *
-         * @return value of instance variable {@link #code}
-         */
-        public String getCode()
-        {
-            return this.code;
-        }
-
-        /**
-         * Getter method for instance variable {@link #fileName}.
-         *
-         * @return value of instance variable {@link #fileName}
-         */
-        public String getFileName()
-        {
-            return this.fileName;
-        }
-
-        /**
-         * Getter method for instance variable {@link #function}.
-         *
-         * @return value of instance variable {@link #function}
-         */
-        public String getFunction()
-        {
-            return this.function;
-        }
-    }
 }
