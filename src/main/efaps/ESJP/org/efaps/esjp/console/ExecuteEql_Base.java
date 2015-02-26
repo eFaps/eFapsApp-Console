@@ -81,7 +81,12 @@ public abstract class ExecuteEql_Base
                 }
                 table.addRow();
                 for (final AbstractValue<?> value : data.getValues()) {
-                    final String valueStr = String.valueOf(value.getValue());
+                    final String valueStr;
+                    if (value == null) {
+                        valueStr = "";
+                    } else {
+                        valueStr = String.valueOf(value.getValue());
+                    }
                     table.addColumn(StringEscapeUtils.escapeEcmaScript(StringEscapeUtils.escapeHtml4(valueStr)));
                 }
             }
