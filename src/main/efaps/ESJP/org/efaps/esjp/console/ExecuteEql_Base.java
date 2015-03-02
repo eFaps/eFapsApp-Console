@@ -20,14 +20,19 @@
 
 package org.efaps.esjp.console;
 
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
+
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.efaps.admin.event.Parameter;
 import org.efaps.admin.event.Return;
 import org.efaps.admin.event.Return.ReturnValues;
 import org.efaps.admin.program.esjp.EFapsRevision;
 import org.efaps.admin.program.esjp.EFapsUUID;
+import org.efaps.db.Insert;
 import org.efaps.eql.JSONData;
 import org.efaps.eql.Statement;
+import org.efaps.esjp.ci.CIConsole;
 import org.efaps.esjp.ci.CIFormConsole;
 import org.efaps.esjp.common.AbstractCommon;
 import org.efaps.esjp.ui.html.Table;
@@ -56,6 +61,12 @@ public abstract class ExecuteEql_Base
         throws EFapsException
     {
         final Return ret = new Return();
+        final StringBuilder html = new StringBuilder();
+        html.append("document.getElementsByName('").append(CIFormConsole.Console_ExecuteEqlForm.result.name)
+            .append("')[0].innerHTML=\"")
+            .append("<style> .eFapsForm .unlabeled .field { display: inline;} ")
+            .append(" #result{ max-height: 400px; overflow: auto; width: 100%; background-color: lightgray;}")
+            .append("</style><div id='result'>");
         try {
             final String eql = _parameter.getParameterValue(CIFormConsole.Console_ExecuteEqlForm.eql.name);
 
@@ -66,9 +77,6 @@ public abstract class ExecuteEql_Base
 
             LOG.debug("Recieved: '{}'", datalist);
 
-            final StringBuilder snipplet = new StringBuilder();
-            snipplet.append("document.getElementsByName('").append(CIFormConsole.Console_ExecuteEqlForm.result.name)
-                            .append("')[0].innerHTML=\"");
             final Table table = new Table();
             boolean first = true;
             for (final ObjectData data : datalist) {
@@ -90,11 +98,21 @@ public abstract class ExecuteEql_Base
                     table.addColumn(StringEscapeUtils.escapeEcmaScript(StringEscapeUtils.escapeHtml4(valueStr)));
                 }
             }
-            snipplet.append(table.toHtml());
-            snipplet.append("\";");
-            ret.put(ReturnValues.SNIPLETT, snipplet.toString());
+            html.append(table.toHtml());
+
+            // if no error store the eql in history
+            final Insert insert = new Insert(CIConsole.EQLHistory);
+            insert.add(CIConsole.EQLHistory.EQLStatement, eql);
+            insert.execute();
         } catch (final Exception e) {
-            LOG.debug("Catched error", e);
+            LOG.error("Catched error:", e);
+            final ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            final PrintStream ps = new PrintStream(baos);
+            e.printStackTrace(ps);
+            html.append(StringEscapeUtils.escapeEcmaScript(StringEscapeUtils.escapeHtml4(baos.toString())));
+        } finally {
+            html.append("</div>\";");
+            ret.put(ReturnValues.SNIPLETT, html.toString());
         }
         return ret;
     }

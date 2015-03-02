@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><!--
+
+ Copyright 2003 - 2013 The eFaps Team
+
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+
+ Author:          The eFaps Team
+ Revision:        $Rev: 10123 $
+ Last Changed:    $Date: 2013-08-26 19:45:34 -0500 (Mon, 26 Aug 2013) $
+ Last Changed By: $Author: jan@moxter.net $
+
+-->
+<ui-table xmlns="http://www.efaps.org/xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
+    <uuid>49f09dd0-bd12-4324-afb0-eaeb4e9255ba</uuid>
+    <file-application>eFapsApp-Console</file-application>
+    <file-revision>$Rev: 10123 $</file-revision>
+    <definition>
+        <version-expression>(version==latest)</version-expression>
+        <name>Console_EQLHistoryTable</name>
+        <field name="eQLStatement">
+            <property name="ModeEdit">EDITABLE</property>
+            <property name="Attribute">EQLStatement</property>
+            <property name="Label">Console_EQLHistory/EQLStatement.Label</property>
+        </field>
+        <field name="creator">
+            <property name="Attribute">Creator</property>
+            <property name="Label">Console_EQLHistory/Creator.Label</property>
+        </field>
+        <field name="created">
+            <property name="Attribute">Created</property>
+            <property name="Label">Console_EQLHistory/Created.Label</property>
+        </field>
+    </definition>
+</ui-table>
