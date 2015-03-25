@@ -30,8 +30,11 @@ import org.efaps.admin.event.Return.ReturnValues;
 import org.efaps.admin.program.esjp.EFapsRevision;
 import org.efaps.admin.program.esjp.EFapsUUID;
 import org.efaps.db.Insert;
+import org.efaps.eql.IEQLStmt;
+import org.efaps.eql.ISelectStmt;
+import org.efaps.eql.IUpdateStmt;
+import org.efaps.eql.InvokerUtil;
 import org.efaps.eql.JSONData;
-import org.efaps.eql.Statement;
 import org.efaps.esjp.ci.CIConsole;
 import org.efaps.esjp.ci.CIFormConsole;
 import org.efaps.esjp.common.AbstractCommon;
@@ -72,34 +75,38 @@ public abstract class ExecuteEql_Base
 
             LOG.debug("Executing eql: '{}'", eql);
 
-            final Statement stmt = Statement.getStatement(eql);
-            final DataList datalist = JSONData.getDataList(stmt);
+            final IEQLStmt stmt = InvokerUtil.getInvoker().invoke(eql);
+            if (stmt instanceof ISelectStmt) {
 
-            LOG.debug("Recieved: '{}'", datalist);
+                final DataList datalist = JSONData.getDataList((ISelectStmt) stmt);
 
-            final Table table = new Table();
-            boolean first = true;
-            for (final ObjectData data : datalist) {
-                if (first) {
-                    first = false;
+                LOG.debug("Recieved: '{}'", datalist);
+
+                final Table table = new Table();
+                boolean first = true;
+                for (final ObjectData data : datalist) {
+                    if (first) {
+                        first = false;
+                        table.addRow();
+                        for (final AbstractValue<?> value : data.getValues()) {
+                            table.addHeaderColumn(value.getKey());
+                        }
+                    }
                     table.addRow();
                     for (final AbstractValue<?> value : data.getValues()) {
-                        table.addHeaderColumn(value.getKey());
+                        final String valueStr;
+                        if (value == null) {
+                            valueStr = "";
+                        } else {
+                            valueStr = String.valueOf(value.getValue());
+                        }
+                        table.addColumn(StringEscapeUtils.escapeEcmaScript(StringEscapeUtils.escapeHtml4(valueStr)));
                     }
                 }
-                table.addRow();
-                for (final AbstractValue<?> value : data.getValues()) {
-                    final String valueStr;
-                    if (value == null) {
-                        valueStr = "";
-                    } else {
-                        valueStr = String.valueOf(value.getValue());
-                    }
-                    table.addColumn(StringEscapeUtils.escapeEcmaScript(StringEscapeUtils.escapeHtml4(valueStr)));
-                }
+                html.append(table.toHtml());
+            } else if (stmt instanceof IUpdateStmt) {
+                ((IUpdateStmt) stmt).execute();
             }
-            html.append(table.toHtml());
-
             // if no error store the eql in history
             final Insert insert = new Insert(CIConsole.EQLHistory);
             insert.add(CIConsole.EQLHistory.EQLStatement, eql);
