@@ -23,15 +23,14 @@
 
 -->
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
         <groupId>org.efaps</groupId>
         <artifactId>efaps-parent</artifactId>
-        <version>3.2.0-SNAPSHOT</version>
+        <version>3.2.0</version>
     </parent>
 
     <packaging>jar</packaging>
@@ -93,7 +92,7 @@
         <connection>scm:git:git://github.com/eFaps/eFapsApp-Console.git</connection>
         <developerConnection>scm:git:git@github.com:eFaps/eFapsApp-Console.git</developerConnection>
         <url>https://github.com/eFaps/eFapsApp-Console/</url>
-      	<tag>HEAD</tag>
+      	<tag>V3.2.0</tag>
   	</scm>
 	
     <!-- Distribution Repository -->
@@ -165,7 +164,7 @@
         <dependency>
             <groupId>org.efaps</groupId>
             <artifactId>efaps-tests</artifactId>
-            <version>${project.version}</version>
+            <version>3.2.0</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
