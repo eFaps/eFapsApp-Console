@@ -30,7 +30,7 @@
     <parent>
         <groupId>org.efaps</groupId>
         <artifactId>efaps-parent</artifactId>
-        <version>3.2.1-SNAPSHOT</version>
+        <version>5.0.0-SNAPSHOT</version>
     </parent>
 
     <packaging>jar</packaging>
@@ -92,9 +92,9 @@
         <connection>scm:git:git://github.com/eFaps/eFapsApp-Console.git</connection>
         <developerConnection>scm:git:git@github.com:eFaps/eFapsApp-Console.git</developerConnection>
         <url>https://github.com/eFaps/eFapsApp-Console/</url>
-      	<tag>HEAD</tag>
-  	</scm>
-	
+          <tag>HEAD</tag>
+      </scm>
+
     <!-- Distribution Repository -->
     <distributionManagement>
         <site>
@@ -164,7 +164,7 @@
         <dependency>
             <groupId>org.efaps</groupId>
             <artifactId>efaps-tests</artifactId>
-            <version>3.2.1-SNAPSHOT</version>
+            <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
