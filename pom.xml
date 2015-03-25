@@ -93,9 +93,9 @@
         <connection>scm:git:git://github.com/eFaps/eFapsApp-Console.git</connection>
         <developerConnection>scm:git:git@github.com:eFaps/eFapsApp-Console.git</developerConnection>
         <url>https://github.com/eFaps/eFapsApp-Console/</url>
-        <tag>HEAD</tag>
-    </scm>
-
+      	<tag>HEAD</tag>
+  	</scm>
+	
     <!-- Distribution Repository -->
     <distributionManagement>
         <site>
@@ -148,7 +148,6 @@
              <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>${maven.surefire.version}</version>
                 <configuration>
                     <suiteXmlFiles>
                         <suiteXmlFile>${basedir}/src/test/resources/testng.xml</suiteXmlFile>
