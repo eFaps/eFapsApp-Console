@@ -30,11 +30,11 @@ import org.efaps.admin.event.Return.ReturnValues;
 import org.efaps.admin.program.esjp.EFapsRevision;
 import org.efaps.admin.program.esjp.EFapsUUID;
 import org.efaps.db.Insert;
-import org.efaps.eql.IEQLStmt;
-import org.efaps.eql.ISelectStmt;
-import org.efaps.eql.IUpdateStmt;
 import org.efaps.eql.InvokerUtil;
 import org.efaps.eql.JSONData;
+import org.efaps.eql.stmt.IEQLStmt;
+import org.efaps.eql.stmt.IPrintStmt;
+import org.efaps.eql.stmt.IUpdateStmt;
 import org.efaps.esjp.ci.CIConsole;
 import org.efaps.esjp.ci.CIFormConsole;
 import org.efaps.esjp.common.AbstractCommon;
@@ -76,9 +76,9 @@ public abstract class ExecuteEql_Base
             LOG.debug("Executing eql: '{}'", eql);
 
             final IEQLStmt stmt = InvokerUtil.getInvoker().invoke(eql);
-            if (stmt instanceof ISelectStmt) {
+            if (stmt instanceof IPrintStmt) {
 
-                final DataList datalist = JSONData.getDataList((ISelectStmt) stmt);
+                final DataList datalist = JSONData.getDataList((IPrintStmt) stmt);
 
                 LOG.debug("Recieved: '{}'", datalist);
 
