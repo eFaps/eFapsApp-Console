@@ -27,7 +27,7 @@ import org.apache.commons.lang3.StringEscapeUtils;
 import org.efaps.admin.event.Parameter;
 import org.efaps.admin.event.Return;
 import org.efaps.admin.event.Return.ReturnValues;
-import org.efaps.admin.program.esjp.EFapsRevision;
+import org.efaps.admin.program.esjp.EFapsApplication;
 import org.efaps.admin.program.esjp.EFapsUUID;
 import org.efaps.db.Insert;
 import org.efaps.eql.InvokerUtil;
@@ -35,7 +35,7 @@ import org.efaps.eql.JSONData;
 import org.efaps.eql.stmt.IEQLStmt;
 import org.efaps.eql.stmt.IPrintStmt;
 import org.efaps.eql.stmt.IUpdateStmt;
-import org.efaps.esjp.ci.CIConsole;
+import org.efaps.esjp.ci.CICommon;
 import org.efaps.esjp.ci.CIFormConsole;
 import org.efaps.esjp.common.AbstractCommon;
 import org.efaps.esjp.ui.html.Table;
@@ -53,7 +53,7 @@ import org.slf4j.LoggerFactory;
  * @version $Id$
  */
 @EFapsUUID("af6a4d60-5a43-40ff-917b-8e89ff9fe320")
-@EFapsRevision("$Rev$")
+@EFapsApplication("eFapsApp-Console")
 public abstract class ExecuteEql_Base
     extends AbstractCommon
 {
@@ -108,8 +108,9 @@ public abstract class ExecuteEql_Base
                 ((IUpdateStmt) stmt).execute();
             }
             // if no error store the eql in history
-            final Insert insert = new Insert(CIConsole.EQLHistory);
-            insert.add(CIConsole.EQLHistory.EQLStatement, eql);
+            final Insert insert = new Insert(CICommon.HistoryEQL);
+            insert.add(CICommon.HistoryEQL.Source, "eFapsApp-Console");
+            insert.add(CICommon.HistoryEQL.EQLStatement, eql);
             insert.execute();
         } catch (final Exception e) {
             LOG.error("Catched error:", e);
