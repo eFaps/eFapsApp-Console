@@ -109,7 +109,7 @@ public abstract class ExecuteEql_Base
             }
             // if no error store the eql in history
             final Insert insert = new Insert(CICommon.HistoryEQL);
-            insert.add(CICommon.HistoryEQL.Source, "eFapsApp-Console");
+            insert.add(CICommon.HistoryEQL.Origin, "eFapsApp-Console");
             insert.add(CICommon.HistoryEQL.EQLStatement, eql);
             insert.execute();
         } catch (final Exception e) {
