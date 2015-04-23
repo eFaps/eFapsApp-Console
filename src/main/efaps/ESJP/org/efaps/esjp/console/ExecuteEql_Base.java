@@ -38,6 +38,7 @@ import org.efaps.eql.stmt.IUpdateStmt;
 import org.efaps.esjp.ci.CICommon;
 import org.efaps.esjp.ci.CIFormConsole;
 import org.efaps.esjp.common.AbstractCommon;
+import org.efaps.esjp.common.uitable.MultiPrint;
 import org.efaps.esjp.ui.html.Table;
 import org.efaps.json.data.AbstractValue;
 import org.efaps.json.data.DataList;
@@ -65,11 +66,12 @@ public abstract class ExecuteEql_Base
     {
         final Return ret = new Return();
         final StringBuilder html = new StringBuilder();
-        html.append("document.getElementsByName('").append(CIFormConsole.Console_ExecuteEqlForm.result.name)
-            .append("')[0].innerHTML=\"")
-            .append("<style> .eFapsForm .unlabeled .field { display: inline;} ")
-            .append(" #result{ max-height: 400px; overflow: auto; width: 100%; background-color: lightgray;}")
-            .append("</style><div id='result'>");
+        html.append("document.getElementsByName('")
+                        .append(CIFormConsole.Console_ExecuteEqlForm.result.name)
+                        .append("')[0].innerHTML=\"")
+                        .append("<style> .eFapsForm .unlabeled .field { display: inline;} ")
+                        .append(" #result{ max-height: 400px; overflow: auto; width: 100%; background-color: lightgray;}")
+                        .append("</style><div id='result'>");
         try {
             final String eql = _parameter.getParameterValue(CIFormConsole.Console_ExecuteEqlForm.eql.name);
 
@@ -123,5 +125,22 @@ public abstract class ExecuteEql_Base
             ret.put(ReturnValues.SNIPLETT, html.toString());
         }
         return ret;
+    }
+
+    public Return historyMultiPrint(final Parameter _parameter)
+        throws EFapsException
+    {
+        final MultiPrint multi = new MultiPrint()
+        {
+
+            @Override
+            protected void add2QueryBldr(final Parameter _parameter,
+                                         final org.efaps.db.QueryBuilder _queryBldr)
+                throws EFapsException
+            {
+                _queryBldr.addWhereAttrEqValue(CICommon.HistoryEQL.Origin, "eFapsApp-Console");
+            };
+        };
+        return multi.execute(_parameter);
     }
 }
