@@ -1,5 +1,5 @@
 /*
- * Copyright 2003 - 2016 The eFaps Team
+ * Copyright 2003 - 2013 The eFaps Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,21 +14,9 @@
  * limitations under the License.
  *
  */
-
-package org.efaps.esjp.console;
-
-import org.efaps.admin.program.esjp.EFapsApplication;
-import org.efaps.admin.program.esjp.EFapsUUID;
-
 /**
- * TODO comment!
+ * Main classed for the console App.
  *
  * @author The eFaps Team
  */
-@EFapsUUID("530bda5f-6a57-4bc1-b3e0-7ab87e7fd394")
-@EFapsApplication("eFapsApp-Console")
-public class ExecuteEsjp
-    extends ExecuteEsjp_Base
-{
-
-}
+package org.efaps.esjp.console;

@@ -1,5 +1,5 @@
 /*
- * Copyright 2003 - 2013 The eFaps Team
+ * Copyright 2003 - 2016 The eFaps Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,21 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Revision:        $Rev: 9669 $
- * Last Changed:    $Date: 2013-06-20 12:12:39 -0500 (jue, 20 jun 2013) $
- * Last Changed By: $Author: jorge.cueva@moxter.net $
  */
 
 package org.efaps.esjp.console;
-
-import groovy.lang.Binding;
-import groovy.lang.GroovyShell;
-import groovy.lang.Script;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -39,8 +33,8 @@ import org.efaps.admin.event.Parameter;
 import org.efaps.admin.event.Parameter.ParameterValues;
 import org.efaps.admin.event.Return;
 import org.efaps.admin.event.Return.ReturnValues;
+import org.efaps.admin.program.esjp.EFapsApplication;
 import org.efaps.admin.program.esjp.EFapsClassLoader;
-import org.efaps.admin.program.esjp.EFapsRevision;
 import org.efaps.admin.program.esjp.EFapsUUID;
 import org.efaps.ci.CIAdminProgram;
 import org.efaps.db.Context;
@@ -55,20 +49,31 @@ import org.efaps.util.EFapsException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import groovy.lang.Binding;
+import groovy.lang.GroovyShell;
+import groovy.lang.Script;
+
 /**
  * TODO comment!
  *
  * @author The eFaps Team
- * @version $Id: AbstractDocument_Base.java 3674 2010-01-28 18:52:35Z jan.moxter
- *          $
  */
 @EFapsUUID("8a1e1edf-e235-4089-8974-30464217facf")
-@EFapsRevision("$Rev: 9669 $")
-public class ExecuteEsjp_Base
+@EFapsApplication("eFapsApp-Console")
+public abstract class ExecuteEsjp_Base
 {
 
+    /** The Constant LOG. */
     private static final Logger LOG = LoggerFactory.getLogger(ExecuteEsjp.class);
 
+    /**
+     * Execute esjp.
+     *
+     * @param _parameter Parameter as passed by the eFaps API
+     * @return the return
+     * @throws EFapsException on error
+     */
+    @SuppressWarnings("checkstyle:illegalcatch")
     public Return executeEsjp(final Parameter _parameter)
         throws EFapsException
     {
@@ -106,6 +111,13 @@ public class ExecuteEsjp_Base
         return ret;
     }
 
+    /**
+     * Auto complete4 program.
+     *
+     * @param _parameter Parameter as passed by the eFaps API
+     * @return the return
+     * @throws EFapsException on error
+     */
     public Return autoComplete4Program(final Parameter _parameter)
         throws EFapsException
     {
@@ -143,6 +155,55 @@ public class ExecuteEsjp_Base
         return ret;
     }
 
+    /**
+     * Update field4 esjp.
+     *
+     * @param _parameter Parameter as passed by the eFaps API
+     * @return the return
+     * @throws EFapsException on error
+     */
+    public Return updateField4ESJP(final Parameter _parameter)
+        throws EFapsException
+    {
+        final Return ret = new Return();
+        final String esjp = _parameter.getParameterValue(CIFormConsole.Console_ExecuteEsjpForm.esjp.name);
+        try {
+            final Class<?> clazz = Class.forName(esjp);
+            final List<String> methods = new ArrayList<>();
+            for (final Method method : clazz.getMethods()) {
+                if (method.getParameterTypes().length == 1
+                                && method.getParameterTypes()[0].equals(Parameter.class)) {
+                    methods.add(method.getName());
+                }
+            }
+            Collections.sort(methods);
+            final StringBuilder arrayStr = new StringBuilder()
+                    .append("new Array('").append(methods.isEmpty()
+                                    ? "" : StringEscapeUtils.escapeEcmaScript(methods.get(0))).append("'");
+            for (final String method : methods) {
+                arrayStr.append(",'").append(StringEscapeUtils.escapeEcmaScript(method)).append("','")
+                    .append(StringEscapeUtils.escapeEcmaScript(method)).append("'");
+            }
+            arrayStr.append(")");
+            final List<Map<String, Object>> values = new ArrayList<>();
+            final Map<String, Object> map = new HashMap<>();
+            map.put(CIFormConsole.Console_ExecuteEsjpForm.method.name, arrayStr);
+            values.add(map);
+            ret.put(ReturnValues.VALUES, values);
+
+        } catch (final ClassNotFoundException e) {
+            LOG.error("ClassNotFoundException", e);
+        }
+        return ret;
+    }
+
+    /**
+     * Execute script.
+     *
+     * @param _parameter Parameter as passed by the eFaps API
+     * @return the return
+     * @throws EFapsException on error
+     */
     public Return executeScript(final Parameter _parameter)
         throws EFapsException
     {
@@ -164,6 +225,13 @@ public class ExecuteEsjp_Base
         return new Return();
     }
 
+    /**
+     * Drop down4 scripts.
+     *
+     * @param _parameter Parameter as passed by the eFaps API
+     * @return the return
+     * @throws EFapsException on error
+     */
     public Return dropDown4Scripts(final Parameter _parameter)
         throws EFapsException
     {
@@ -186,8 +254,6 @@ public class ExecuteEsjp_Base
                 ret.put(ReturnValues.SNIPLETT, html);
                 return ret;
             }
-
         }.dropDownFieldValue(_parameter);
     }
-
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2003 - 2014 The eFaps Team
+ * Copyright 2003 - 2016 The eFaps Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,9 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Revision:        $Rev$
- * Last Changed:    $Date$
- * Last Changed By: $Author$
  */
 
 package org.efaps.esjp.console;
@@ -51,7 +48,6 @@ import org.slf4j.LoggerFactory;
  * TODO comment!
  *
  * @author The eFaps Team
- * @version $Id$
  */
 @EFapsUUID("af6a4d60-5a43-40ff-917b-8e89ff9fe320")
 @EFapsApplication("eFapsApp-Console")
@@ -59,19 +55,28 @@ public abstract class ExecuteEql_Base
     extends AbstractCommon
 {
 
+    /** The Constant LOG. */
     private static final Logger LOG = LoggerFactory.getLogger(ExecuteEql.class);
 
+    /**
+     * Execute eql.
+     *
+     * @param _parameter Parameter as passed by the eFaps API
+     * @return the return
+     * @throws EFapsException on error
+     */
+    @SuppressWarnings("checkstyle:illegalcatch")
     public Return executeEql(final Parameter _parameter)
         throws EFapsException
     {
         final Return ret = new Return();
         final StringBuilder html = new StringBuilder();
         html.append("document.getElementsByName('")
-                        .append(CIFormConsole.Console_ExecuteEqlForm.result.name)
-                        .append("')[0].innerHTML=\"")
-                        .append("<style> .eFapsForm .unlabeled .field { display: inline;} ")
-                        .append(" #result{ max-height: 400px; overflow: auto; width: 100%; background-color: lightgray;}")
-                        .append("</style><div id='result'>");
+                    .append(CIFormConsole.Console_ExecuteEqlForm.result.name)
+                    .append("')[0].innerHTML=\"")
+                    .append("<style> .eFapsForm .unlabeled .field { display: inline;} ")
+                    .append(" #result{ max-height: 400px; overflow: auto; width: 100%; background-color: lightgray;}")
+                    .append("</style><div id='result'>");
         try {
             final String eql = _parameter.getParameterValue(CIFormConsole.Console_ExecuteEqlForm.eql.name);
 
@@ -127,6 +132,13 @@ public abstract class ExecuteEql_Base
         return ret;
     }
 
+    /**
+     * History multi print.
+     *
+     * @param _parameter Parameter as passed by the eFaps API
+     * @return the return
+     * @throws EFapsException on error
+     */
     public Return historyMultiPrint(final Parameter _parameter)
         throws EFapsException
     {
