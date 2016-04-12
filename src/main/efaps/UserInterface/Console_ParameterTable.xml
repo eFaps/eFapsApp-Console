@@ -32,13 +32,13 @@
         <name>Console_ParameterTable</name>
         <field name="keyField">
             <property name="ModeCreate">EDITABLE</property>
-            <property name="ClassNameUI">org.efaps.admin.datamodel.ui.StringUI</property>
+            <property name="UIProvider">org.efaps.admin.datamodel.ui.StringUI</property>
             <property name="Label">Console_ParameterTable.key.Label</property>
             
         </field>
         <field name="valueField">
             <property name="ModeCreate">EDITABLE</property>
-            <property name="ClassNameUI">org.efaps.admin.datamodel.ui.StringUI</property>
+            <property name="UIProvider">org.efaps.admin.datamodel.ui.StringUI</property>
             <property name="Label">Console_ParameterTable.value.Label</property>
         </field>
     </definition>
