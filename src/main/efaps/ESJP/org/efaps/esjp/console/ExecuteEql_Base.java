@@ -128,7 +128,9 @@ public abstract class ExecuteEql_Base
                     final org.efaps.json.ci.Type ciType = (Type) ci;
                     for (final Attribute attr: ciType.getAttributes()) {
                         table.addRow()
-                            .addColumn(StringEscapeUtils.escapeHtml4(attr.getName()));
+                            .addColumn(StringEscapeUtils.escapeHtml4(attr.getName()))
+                            .addColumn(StringEscapeUtils.escapeHtml4(attr.getType().getName()))
+                            .addColumn(StringEscapeUtils.escapeHtml4(attr.getType().getInfo()));
                     }
                 }
                 html.append(StringEscapeUtils.escapeEcmaScript(table.toHtml().toString()));
