@@ -28,7 +28,10 @@ import org.efaps.admin.program.esjp.EFapsApplication;
 import org.efaps.admin.program.esjp.EFapsUUID;
 import org.efaps.db.Insert;
 import org.efaps.eql.InvokerUtil;
+import org.efaps.eql.JSONCI;
 import org.efaps.eql.JSONData;
+import org.efaps.eql.stmt.ICIPrintStmt;
+import org.efaps.eql.stmt.ICIStmt;
 import org.efaps.eql.stmt.IEQLStmt;
 import org.efaps.eql.stmt.IPrintStmt;
 import org.efaps.eql.stmt.IUpdateStmt;
@@ -37,6 +40,9 @@ import org.efaps.esjp.ci.CIFormConsole;
 import org.efaps.esjp.common.AbstractCommon;
 import org.efaps.esjp.common.uitable.MultiPrint;
 import org.efaps.esjp.ui.html.Table;
+import org.efaps.json.ci.AbstractCI;
+import org.efaps.json.ci.Attribute;
+import org.efaps.json.ci.Type;
 import org.efaps.json.data.AbstractValue;
 import org.efaps.json.data.DataList;
 import org.efaps.json.data.ObjectData;
@@ -113,6 +119,19 @@ public abstract class ExecuteEql_Base
                 html.append(table.toHtml());
             } else if (stmt instanceof IUpdateStmt) {
                 ((IUpdateStmt) stmt).execute();
+            } else if (stmt instanceof ICIStmt) {
+                final AbstractCI<?> ci = JSONCI.getCI((ICIPrintStmt) stmt);
+                final Table table = new Table();
+                table.addColumn(StringEscapeUtils.escapeHtml4(ci.getName()))
+                                .addColumn(StringEscapeUtils.escapeHtml4(ci.getUUID().toString()));
+                if (ci instanceof org.efaps.json.ci.Type) {
+                    final org.efaps.json.ci.Type ciType = (Type) ci;
+                    for (final Attribute attr: ciType.getAttributes()) {
+                        table.addRow()
+                            .addColumn(StringEscapeUtils.escapeHtml4(attr.getName()));
+                    }
+                }
+                html.append(StringEscapeUtils.escapeEcmaScript(table.toHtml().toString()));
             }
             // if no error store the eql in history
             final Insert insert = new Insert(CICommon.HistoryEQL);

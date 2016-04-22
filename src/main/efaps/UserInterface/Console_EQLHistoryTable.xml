@@ -14,17 +14,11 @@
  See the License for the specific language governing permissions and
  limitations under the License.
 
- Author:          The eFaps Team
- Revision:        $Rev: 10123 $
- Last Changed:    $Date: 2013-08-26 19:45:34 -0500 (Mon, 26 Aug 2013) $
- Last Changed By: $Author: jan@moxter.net $
-
 -->
 <ui-table xmlns="http://www.efaps.org/xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
     <uuid>49f09dd0-bd12-4324-afb0-eaeb4e9255ba</uuid>
     <file-application>eFapsApp-Console</file-application>
-    <file-revision>$Rev: 10123 $</file-revision>
     <definition>
         <version-expression>(version==latest)</version-expression>
         <name>Console_EQLHistoryTable</name>
