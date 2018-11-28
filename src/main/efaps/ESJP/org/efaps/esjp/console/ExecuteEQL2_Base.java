@@ -27,8 +27,12 @@ import org.efaps.admin.event.Return.ReturnValues;
 import org.efaps.admin.program.esjp.EFapsApplication;
 import org.efaps.admin.program.esjp.EFapsUUID;
 import org.efaps.db.Insert;
+import org.efaps.db.Instance;
 import org.efaps.db.stmt.AbstractStmt;
+import org.efaps.db.stmt.DeleteStmt;
+import org.efaps.db.stmt.InsertStmt;
 import org.efaps.db.stmt.PrintStmt;
+import org.efaps.db.stmt.UpdateStmt;
 import org.efaps.db.stmt.selection.Evaluator;
 import org.efaps.eql.EQL;
 import org.efaps.esjp.ci.CICommon;
@@ -69,32 +73,47 @@ public abstract class ExecuteEQL2_Base
         try {
             final String eqlStmt = _parameter.getParameterValue(CIFormConsole.Console_ExecuteEQL2Form.eql.name);
             final AbstractStmt stmt = EQL.getStatement(eqlStmt);
-            final PrintStmt printStmt = (PrintStmt) stmt;
-            final Evaluator eval = printStmt.evaluate();
-            final DataList datalist = eval.getDataList();
 
-            final Table table = new Table();
-            boolean first = true;
-            for (final ObjectData data : datalist) {
-                if (first) {
-                    first = false;
+            if (stmt instanceof PrintStmt) {
+                final PrintStmt printStmt = (PrintStmt) stmt;
+                final Evaluator eval = printStmt.evaluate();
+                final DataList datalist = eval.getDataList();
+
+                final Table table = new Table();
+                boolean first = true;
+                for (final ObjectData data : datalist) {
+                    if (first) {
+                        first = false;
+                        table.addRow();
+                        for (final AbstractValue<?> value : data.getValues()) {
+                            table.addHeaderColumn(value.getKey());
+                        }
+                    }
                     table.addRow();
                     for (final AbstractValue<?> value : data.getValues()) {
-                        table.addHeaderColumn(value.getKey());
+                        final String valueStr;
+                        if (value == null) {
+                            valueStr = "";
+                        } else {
+                            valueStr = String.valueOf(value.getValue());
+                        }
+                        table.addColumn(StringEscapeUtils.escapeEcmaScript(StringEscapeUtils.escapeHtml4(valueStr)));
                     }
                 }
-                table.addRow();
-                for (final AbstractValue<?> value : data.getValues()) {
-                    final String valueStr;
-                    if (value == null) {
-                        valueStr = "";
-                    } else {
-                        valueStr = String.valueOf(value.getValue());
-                    }
-                    table.addColumn(StringEscapeUtils.escapeEcmaScript(StringEscapeUtils.escapeHtml4(valueStr)));
-                }
+                html.append(table.toHtml());
+            } else if (stmt instanceof DeleteStmt) {
+                final DeleteStmt deleteStmt = (DeleteStmt) stmt;
+                deleteStmt.execute();
+                html.append("Success");
+            } else if (stmt instanceof InsertStmt) {
+                final InsertStmt insertStmt = (InsertStmt) stmt;
+                final Instance inst = insertStmt.execute();
+                html.append("Success: ").append(inst.getOid());
+            } else if (stmt instanceof UpdateStmt) {
+                final UpdateStmt updateStmt = (UpdateStmt) stmt;
+                updateStmt.execute();
+                html.append("Success");
             }
-            html.append(table.toHtml());
             // if no error store the eql in history
             final Insert insert = new Insert(CICommon.HistoryEQL);
             insert.add(CICommon.HistoryEQL.Origin, "eFapsApp-Console");
