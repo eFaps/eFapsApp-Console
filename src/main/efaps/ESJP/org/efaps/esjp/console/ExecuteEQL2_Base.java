@@ -67,7 +67,7 @@ public abstract class ExecuteEQL2_Base
             .append(CIFormConsole.Console_ExecuteEQL2Form.result.name)
             .append("')[0].innerHTML=\"")
             .append("<style> .eFapsForm .unlabeled .field { display: inline;} ")
-            .append(" #result{ max-height: 400px; overflow: auto; width: 100%; background-color: lightgray;}")
+            .append(" #result{ max-height: 400px; overflow: auto; width: 100%; background-color: lightgray; padding: 5px 10px;}")
             .append("</style><div id='result'>");
 
         try {
