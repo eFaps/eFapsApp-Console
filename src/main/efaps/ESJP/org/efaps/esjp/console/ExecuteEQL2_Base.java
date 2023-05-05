@@ -29,16 +29,21 @@ import org.efaps.admin.program.esjp.EFapsUUID;
 import org.efaps.db.Insert;
 import org.efaps.db.Instance;
 import org.efaps.db.stmt.AbstractStmt;
+import org.efaps.db.stmt.CIPrintStmt;
 import org.efaps.db.stmt.DeleteStmt;
 import org.efaps.db.stmt.InsertStmt;
 import org.efaps.db.stmt.PrintStmt;
 import org.efaps.db.stmt.UpdateStmt;
 import org.efaps.db.stmt.selection.Evaluator;
 import org.efaps.eql.EQL;
+import org.efaps.eql.JSONCI;
 import org.efaps.esjp.ci.CICommon;
 import org.efaps.esjp.ci.CIFormConsole;
 import org.efaps.esjp.common.AbstractCommon;
 import org.efaps.esjp.ui.html.Table;
+import org.efaps.json.ci.AbstractCI;
+import org.efaps.json.ci.Attribute;
+import org.efaps.json.ci.Type;
 import org.efaps.json.data.AbstractValue;
 import org.efaps.json.data.DataList;
 import org.efaps.json.data.ObjectData;
@@ -113,7 +118,22 @@ public abstract class ExecuteEQL2_Base
                 final UpdateStmt updateStmt = (UpdateStmt) stmt;
                 updateStmt.execute();
                 html.append("Success");
-            }
+            } else if (stmt instanceof CIPrintStmt) {
+              final AbstractCI<?> ci = JSONCI.getCI((CIPrintStmt) stmt);
+              final Table table = new Table();
+              table.addColumn(StringEscapeUtils.escapeHtml4(ci.getName()))
+                              .addColumn(StringEscapeUtils.escapeHtml4(ci.getUUID().toString()));
+              if (ci instanceof org.efaps.json.ci.Type) {
+                  final org.efaps.json.ci.Type ciType = (Type) ci;
+                  for (final Attribute attr: ciType.getAttributes()) {
+                      table.addRow()
+                          .addColumn(StringEscapeUtils.escapeHtml4(attr.getName()))
+                          .addColumn(StringEscapeUtils.escapeHtml4(attr.getType().getName()))
+                          .addColumn(StringEscapeUtils.escapeHtml4(attr.getType().getInfo()));
+                  }
+              }
+              html.append(StringEscapeUtils.escapeEcmaScript(table.toHtml().toString()));
+          }
             // if no error store the eql in history
             final Insert insert = new Insert(CICommon.HistoryEQL);
             insert.add(CICommon.HistoryEQL.Origin, "eFapsApp-Console");
