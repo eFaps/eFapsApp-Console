@@ -74,7 +74,7 @@ public abstract class ExecuteEQL2_Base
             .append("<style> .eFapsForm .unlabeled .field { display: inline;} ")
             .append(" #result{ max-height: 400px; overflow: auto; width: 100%; background-color: lightgray; padding: 5px 10px;}")
             .append("</style><div id='result'>");
-
+        Object restResult = null;
         try {
             final String eqlStmt = _parameter.getParameterValue(CIFormConsole.Console_ExecuteEQL2Form.eql.name);
             final AbstractStmt stmt = EQL.getStatement(eqlStmt);
@@ -83,7 +83,7 @@ public abstract class ExecuteEQL2_Base
                 final PrintStmt printStmt = (PrintStmt) stmt;
                 final Evaluator eval = printStmt.evaluate();
                 final DataList datalist = eval.getDataList();
-
+                restResult = datalist;
                 final Table table = new Table();
                 boolean first = true;
                 for (final ObjectData data : datalist) {
@@ -110,14 +110,17 @@ public abstract class ExecuteEQL2_Base
                 final DeleteStmt deleteStmt = (DeleteStmt) stmt;
                 deleteStmt.execute();
                 html.append("Success");
+                restResult = "Sucess";
             } else if (stmt instanceof InsertStmt) {
                 final InsertStmt insertStmt = (InsertStmt) stmt;
                 final Instance inst = insertStmt.execute();
                 html.append("Success: ").append(inst.getOid());
+                restResult = "Sucess " + inst.getOid();
             } else if (stmt instanceof UpdateStmt) {
                 final UpdateStmt updateStmt = (UpdateStmt) stmt;
                 updateStmt.execute();
                 html.append("Success");
+                restResult = "Sucess";
             } else if (stmt instanceof CIPrintStmt) {
               final AbstractCI<?> ci = JSONCI.getCI((CIPrintStmt) stmt);
               final Table table = new Table();
@@ -133,6 +136,7 @@ public abstract class ExecuteEQL2_Base
                   }
               }
               html.append(StringEscapeUtils.escapeEcmaScript(table.toHtml().toString()));
+              restResult = ci;
           }
             // if no error store the eql in history
             final Insert insert = new Insert(CICommon.HistoryEQL);
@@ -144,10 +148,15 @@ public abstract class ExecuteEQL2_Base
             final ByteArrayOutputStream baos = new ByteArrayOutputStream();
             final PrintStream ps = new PrintStream(baos);
             e.printStackTrace(ps);
+            restResult = baos.toString();
             html.append(StringEscapeUtils.escapeEcmaScript(StringEscapeUtils.escapeHtml4(baos.toString())));
         } finally {
             html.append("</div>\";");
-            ret.put(ReturnValues.SNIPLETT, html.toString());
+            if (_parameter.getParameterValue("eFaps-REST") == null) {
+                ret.put(ReturnValues.SNIPLETT, html.toString());
+            } else {
+                ret.put(ReturnValues.VALUES, restResult);
+            }
         }
         return ret;
     }
