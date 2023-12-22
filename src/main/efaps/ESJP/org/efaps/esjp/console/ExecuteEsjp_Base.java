@@ -28,7 +28,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.TreeMap;
 
-import org.apache.commons.lang3.StringEscapeUtils;
+import org.apache.commons.text.StringEscapeUtils;
 import org.efaps.admin.event.Parameter;
 import org.efaps.admin.event.Parameter.ParameterValues;
 import org.efaps.admin.event.Return;
@@ -44,7 +44,6 @@ import org.efaps.db.QueryBuilder;
 import org.efaps.esjp.ci.CIFormConsole;
 import org.efaps.esjp.common.uiform.Field;
 import org.efaps.esjp.common.uitable.MultiPrint;
-import org.efaps.ui.wicket.util.EFapsKey;
 import org.efaps.util.EFapsException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -73,7 +72,6 @@ public abstract class ExecuteEsjp_Base
      * @return the return
      * @throws EFapsException on error
      */
-    @SuppressWarnings("checkstyle:illegalcatch")
     public Return executeEsjp(final Parameter _parameter)
         throws EFapsException
     {
@@ -94,7 +92,7 @@ public abstract class ExecuteEsjp_Base
         try {
             final Class<?> clazz = Class.forName(esjp);
             final Method method = clazz.getMethod(methodStr, new Class[] { Parameter.class });
-            method.invoke(clazz.newInstance(), _parameter);
+            method.invoke(clazz.getConstructor().newInstance(), _parameter);
         } catch (final Exception e) {
             ExecuteEsjp_Base.LOG.error("Catched:", e);
             final ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -121,7 +119,7 @@ public abstract class ExecuteEsjp_Base
     public Return autoComplete4Program(final Parameter _parameter)
         throws EFapsException
     {
-        final Map<String, Map<String, String>> tmpMap = new TreeMap<String, Map<String, String>>();
+        final Map<String, Map<String, String>> tmpMap = new TreeMap<>();
         final List<Instance> instances = new MultiPrint()
         {
 
@@ -133,7 +131,7 @@ public abstract class ExecuteEsjp_Base
                 final String input = (String) _parameter.get(ParameterValues.OTHERS);
                 _queryBldr.addWhereAttrMatchValue(CIAdminProgram.Abstract.Name, input + "*").setIgnoreCase(true);
 
-            };
+            }
         }.getInstances(_parameter);
 
         final MultiPrintQuery multi = new MultiPrintQuery(instances);
@@ -141,14 +139,14 @@ public abstract class ExecuteEsjp_Base
         multi.execute();
         while (multi.next()) {
             final String name = multi.<String>getAttribute(CIAdminProgram.Abstract.Name);
-            final Map<String, String> map = new HashMap<String, String>();
-            map.put(EFapsKey.AUTOCOMPLETE_KEY.getKey(), name);
-            map.put(EFapsKey.AUTOCOMPLETE_VALUE.getKey(), name);
-            map.put(EFapsKey.AUTOCOMPLETE_CHOICE.getKey(), name);
+            final Map<String, String> map = new HashMap<>();
+            map.put("eFapsAutoCompleteKEY", name);
+            map.put("eFapsAutoCompleteVALUE", name);
+            map.put("eFapsAutoCompleteCHOICE", name);
             tmpMap.put(name, map);
         }
         final Return ret = new Return();
-        final List<Map<String, String>> list = new ArrayList<Map<String, String>>();
+        final List<Map<String, String>> list = new ArrayList<>();
         list.addAll(tmpMap.values());
         ret.put(ReturnValues.VALUES, list);
 
@@ -243,7 +241,7 @@ public abstract class ExecuteEsjp_Base
                 throws EFapsException
             {
                 final Map<Integer, String> options = analyseProperty(_parameter, "Option");
-                final List<DropDownPosition> values = new ArrayList<DropDownPosition>();
+                final List<DropDownPosition> values = new ArrayList<>();
                 for (final Entry<Integer, String> option : options.entrySet()) {
                     final DropDownPosition pos = new DropDownPosition(option.getValue(), option.getValue());
                     values.add(pos);
