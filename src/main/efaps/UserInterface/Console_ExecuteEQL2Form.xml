@@ -50,6 +50,7 @@
         </field>
         <field character="Target" name="history">
             <property name="ModeCreate">READONLY</property>
+            <property name="ModeEdit">READONLY</property>
             <table>Console_EQLHistoryTable</table>
             <evaluate method="historyMultiPrint"
                 program="org.efaps.esjp.console.ExecuteEql">

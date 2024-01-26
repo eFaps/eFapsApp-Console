@@ -27,7 +27,7 @@
             <form>Console_ExecuteEQL2Form</form>
         </target>
         <property name="Target">modal</property>
-        <property name="TargetMode">create</property>
+        <property name="TargetMode">edit</property>
         <property name="WindowHeight">660</property>
         <property name="WindowWidth">1200</property>
     </definition>
