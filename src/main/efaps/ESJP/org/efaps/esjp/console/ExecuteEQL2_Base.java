@@ -30,6 +30,7 @@ import org.efaps.db.Insert;
 import org.efaps.db.Instance;
 import org.efaps.db.stmt.AbstractStmt;
 import org.efaps.db.stmt.CIPrintStmt;
+import org.efaps.db.stmt.CountStmt;
 import org.efaps.db.stmt.DeleteStmt;
 import org.efaps.db.stmt.InsertStmt;
 import org.efaps.db.stmt.PrintStmt;
@@ -43,7 +44,6 @@ import org.efaps.esjp.common.AbstractCommon;
 import org.efaps.esjp.ui.html.Table;
 import org.efaps.json.ci.AbstractCI;
 import org.efaps.json.ci.Attribute;
-import org.efaps.json.ci.Type;
 import org.efaps.json.data.AbstractValue;
 import org.efaps.json.data.DataList;
 import org.efaps.json.data.ObjectData;
@@ -79,8 +79,7 @@ public abstract class ExecuteEQL2_Base
             final String eqlStmt = _parameter.getParameterValue(CIFormConsole.Console_ExecuteEQL2Form.eql.name);
             final AbstractStmt stmt = EQL.getStatement(eqlStmt);
 
-            if (stmt instanceof PrintStmt) {
-                final PrintStmt printStmt = (PrintStmt) stmt;
+            if (stmt instanceof final PrintStmt printStmt) {
                 final Evaluator eval = printStmt.evaluate();
                 final DataList datalist = eval.getDataList();
                 restResult = datalist;
@@ -106,18 +105,18 @@ public abstract class ExecuteEQL2_Base
                     }
                 }
                 html.append(table.toHtml());
-            } else if (stmt instanceof DeleteStmt) {
-                final DeleteStmt deleteStmt = (DeleteStmt) stmt;
+            } else  if (stmt instanceof final CountStmt countStmt) {
+                final Evaluator eval = countStmt.evaluate();
+                restResult = eval.count();
+            } else if (stmt instanceof final DeleteStmt deleteStmt) {
                 deleteStmt.execute();
                 html.append("Success");
                 restResult = "Sucess";
-            } else if (stmt instanceof InsertStmt) {
-                final InsertStmt insertStmt = (InsertStmt) stmt;
+            } else if (stmt instanceof final InsertStmt insertStmt) {
                 final Instance inst = insertStmt.execute();
                 html.append("Success: ").append(inst.getOid());
                 restResult = "Sucess " + inst.getOid();
-            } else if (stmt instanceof UpdateStmt) {
-                final UpdateStmt updateStmt = (UpdateStmt) stmt;
+            } else if (stmt instanceof final UpdateStmt updateStmt) {
                 updateStmt.execute();
                 html.append("Success");
                 restResult = "Sucess";
@@ -126,8 +125,7 @@ public abstract class ExecuteEQL2_Base
               final Table table = new Table();
               table.addColumn(StringEscapeUtils.escapeHtml4(ci.getName()))
                               .addColumn(StringEscapeUtils.escapeHtml4(ci.getUUID().toString()));
-              if (ci instanceof org.efaps.json.ci.Type) {
-                  final org.efaps.json.ci.Type ciType = (Type) ci;
+              if (ci instanceof final org.efaps.json.ci.Type ciType) {
                   for (final Attribute attr: ciType.getAttributes()) {
                       table.addRow()
                           .addColumn(StringEscapeUtils.escapeHtml4(attr.getName()))
