@@ -30,6 +30,7 @@ import org.efaps.db.stmt.AbstractStmt;
 import org.efaps.db.stmt.CIPrintStmt;
 import org.efaps.db.stmt.CountStmt;
 import org.efaps.db.stmt.DeleteStmt;
+import org.efaps.db.stmt.ExecStmt;
 import org.efaps.db.stmt.InsertStmt;
 import org.efaps.db.stmt.PrintStmt;
 import org.efaps.db.stmt.UpdateStmt;
@@ -77,6 +78,8 @@ public abstract class ExecuteEQL2_Base
             final String eqlStmt = _parameter.getParameterValue(CIFormConsole.Console_ExecuteEQL2Form.eql.name);
             final AbstractStmt stmt = EQL.getStatement(eqlStmt);
 
+            LOG.debug("Converted eqlStmt: {}\nto: {}", eqlStmt, stmt);
+
             if (stmt instanceof final PrintStmt printStmt) {
                 final Evaluator eval = printStmt.evaluate();
                 final DataList datalist = eval.getDataList();
@@ -118,6 +121,9 @@ public abstract class ExecuteEQL2_Base
                 updateStmt.execute();
                 html.append("Success");
                 restResult = "Sucess";
+            }else if (stmt instanceof final ExecStmt execStmt) {
+                restResult = execStmt.getDataList();
+                html.append("Success");
             } else if (stmt instanceof CIPrintStmt) {
               final AbstractCI<?> ci = JSONCI.getCI((CIPrintStmt) stmt);
               final Table table = new Table();
