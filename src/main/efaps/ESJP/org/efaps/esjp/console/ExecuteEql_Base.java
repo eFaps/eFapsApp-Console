@@ -17,17 +17,25 @@ package org.efaps.esjp.console;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.text.StringEscapeUtils;
+import org.efaps.admin.datamodel.Type;
 import org.efaps.admin.event.Parameter;
 import org.efaps.admin.event.Return;
 import org.efaps.admin.event.Return.ReturnValues;
 import org.efaps.admin.program.esjp.EFapsApplication;
 import org.efaps.admin.program.esjp.EFapsUUID;
+import org.efaps.admin.ui.AbstractUserInterfaceObject;
+import org.efaps.admin.ui.field.Field;
 import org.efaps.db.Insert;
 import org.efaps.eql.InvokerUtil;
 import org.efaps.eql.JSONCI;
 import org.efaps.eql.JSONData;
+import  org.efaps.eql.builder.Query;
+import  org.efaps.eql.builder.Where;
 import org.efaps.eql.stmt.ICIPrintStmt;
 import org.efaps.eql.stmt.ICIStmt;
 import org.efaps.eql.stmt.IEQLStmt;
@@ -38,9 +46,10 @@ import org.efaps.esjp.ci.CIFormConsole;
 import org.efaps.esjp.common.AbstractCommon;
 import org.efaps.esjp.common.uitable.MultiPrint;
 import org.efaps.esjp.ui.html.Table;
+import org.efaps.esjp.ui.rest.provider.ITableProvider;
+import org.efaps.esjp.ui.rest.provider.StandardTableProvider;
 import org.efaps.json.ci.AbstractCI;
 import org.efaps.json.ci.Attribute;
-import org.efaps.json.ci.Type;
 import org.efaps.json.data.AbstractValue;
 import org.efaps.json.data.DataList;
 import org.efaps.json.data.ObjectData;
@@ -57,6 +66,7 @@ import org.slf4j.LoggerFactory;
 @EFapsApplication("eFapsApp-Console")
 public abstract class ExecuteEql_Base
     extends AbstractCommon
+    implements ITableProvider
 {
 
     /** The Constant LOG. */
@@ -76,11 +86,11 @@ public abstract class ExecuteEql_Base
         final Return ret = new Return();
         final StringBuilder html = new StringBuilder();
         html.append("document.getElementsByName('")
-                    .append(CIFormConsole.Console_ExecuteEqlForm.result.name)
-                    .append("')[0].innerHTML=\"")
-                    .append("<style> .eFapsForm .unlabeled .field { display: inline;} ")
-                    .append(" #result{ max-height: 400px; overflow: auto; width: 100%; background-color: lightgray;}")
-                    .append("</style><div id='result'>");
+                        .append(CIFormConsole.Console_ExecuteEqlForm.result.name)
+                        .append("')[0].innerHTML=\"")
+                        .append("<style> .eFapsForm .unlabeled .field { display: inline;} ")
+                        .append(" #result{ max-height: 400px; overflow: auto; width: 100%; background-color: lightgray;}")
+                        .append("</style><div id='result'>");
         try {
             final String eql = _parameter.getParameterValue(CIFormConsole.Console_ExecuteEqlForm.eql.name);
 
@@ -122,13 +132,12 @@ public abstract class ExecuteEql_Base
                 final Table table = new Table();
                 table.addColumn(StringEscapeUtils.escapeHtml4(ci.getName()))
                                 .addColumn(StringEscapeUtils.escapeHtml4(ci.getUUID().toString()));
-                if (ci instanceof org.efaps.json.ci.Type) {
-                    final org.efaps.json.ci.Type ciType = (Type) ci;
-                    for (final Attribute attr: ciType.getAttributes()) {
+                if (ci instanceof final org.efaps.json.ci.Type ciType) {
+                    for (final Attribute attr : ciType.getAttributes()) {
                         table.addRow()
-                            .addColumn(StringEscapeUtils.escapeHtml4(attr.getName()))
-                            .addColumn(StringEscapeUtils.escapeHtml4(attr.getType().getName()))
-                            .addColumn(StringEscapeUtils.escapeHtml4(attr.getType().getInfo()));
+                                        .addColumn(StringEscapeUtils.escapeHtml4(attr.getName()))
+                                        .addColumn(StringEscapeUtils.escapeHtml4(attr.getType().getName()))
+                                        .addColumn(StringEscapeUtils.escapeHtml4(attr.getType().getInfo()));
                     }
                 }
                 html.append(StringEscapeUtils.escapeEcmaScript(table.toHtml().toString()));
@@ -170,8 +179,32 @@ public abstract class ExecuteEql_Base
                 throws EFapsException
             {
                 _queryBldr.addWhereAttrEqValue(CICommon.HistoryEQL.Origin, "eFapsApp-Console");
-            };
+            }
         };
         return multi.execute(_parameter);
+    }
+
+    @Override
+    public Collection<Map<String, ?>> getValues(final AbstractUserInterfaceObject cmd,
+                                                final List<Field> fields,
+                                                final Map<String, String> properties,
+                                                final String oid)
+        throws EFapsException
+    {
+        final var provider = new StandardTableProvider()
+        {
+
+            @Override
+            public void addFilter(final AbstractUserInterfaceObject cmd,
+                                  final Query query,
+                                  final Where where,
+                                  final List<Type> types,
+                                  final List<Field> fields)
+                throws EFapsException
+            {
+                query.where().attribute(CICommon.HistoryEQL.Origin).eq("eFapsApp-Console");
+            }
+        };
+        return provider.getValues(cmd, fields, properties, oid);
     }
 }
