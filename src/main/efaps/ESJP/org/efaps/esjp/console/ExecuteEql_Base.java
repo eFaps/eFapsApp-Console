@@ -72,6 +72,8 @@ public abstract class ExecuteEql_Base
     /** The Constant LOG. */
     private static final Logger LOG = LoggerFactory.getLogger(ExecuteEql.class);
 
+    private ITableProvider tableProvider;
+
     /**
      * Execute eql.
      *
@@ -185,26 +187,30 @@ public abstract class ExecuteEql_Base
     }
 
     @Override
-    public Collection<Map<String, ?>> getValues(final AbstractUserInterfaceObject cmd,
+    public ITableProvider init(final AbstractUserInterfaceObject cmd,
                                                 final List<Field> fields,
                                                 final Map<String, String> properties,
                                                 final String oid)
         throws EFapsException
     {
-        final var provider = new StandardTableProvider()
+        tableProvider = new StandardTableProvider()
         {
-
             @Override
-            public void addFilter(final AbstractUserInterfaceObject cmd,
-                                  final Query query,
+            public void addFilter(final Query query,
                                   final Where where,
-                                  final List<Type> types,
-                                  final List<Field> fields)
+                                  final List<Type> types)
                 throws EFapsException
             {
                 query.where().attribute(CICommon.HistoryEQL.Origin).eq("eFapsApp-Console");
             }
         };
-        return provider.getValues(cmd, fields, properties, oid);
+        return tableProvider;
+    }
+
+    @Override
+    public Collection<Map<String, ?>> getValues()
+        throws EFapsException
+    {
+        return tableProvider.getValues();
     }
 }
