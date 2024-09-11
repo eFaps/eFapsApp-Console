@@ -81,7 +81,6 @@ public abstract class ExecuteEql_Base
      * @return the return
      * @throws EFapsException on error
      */
-    @SuppressWarnings("checkstyle:illegalcatch")
     public Return executeEql(final Parameter _parameter)
         throws EFapsException
     {
@@ -204,6 +203,7 @@ public abstract class ExecuteEql_Base
                 query.where().attribute(CICommon.HistoryEQL.Origin).eq("eFapsApp-Console");
             }
         };
+        tableProvider.init(cmd, fields, properties, oid);
         return tableProvider;
     }
 
