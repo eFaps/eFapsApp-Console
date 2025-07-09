@@ -29,6 +29,7 @@ import org.efaps.admin.event.Return.ReturnValues;
 import org.efaps.admin.program.esjp.EFapsApplication;
 import org.efaps.admin.program.esjp.EFapsUUID;
 import org.efaps.admin.ui.AbstractUserInterfaceObject;
+import org.efaps.admin.ui.AbstractUserInterfaceObject.TargetMode;
 import org.efaps.admin.ui.field.Field;
 import org.efaps.db.Insert;
 import org.efaps.eql.InvokerUtil;
@@ -189,6 +190,7 @@ public abstract class ExecuteEql_Base
     public ITableProvider init(final AbstractUserInterfaceObject cmd,
                                                 final List<Field> fields,
                                                 final Map<String, String> properties,
+                                                final TargetMode targetMode,
                                                 final String oid)
         throws EFapsException
     {
@@ -203,7 +205,7 @@ public abstract class ExecuteEql_Base
                 query.where().attribute(CICommon.HistoryEQL.Origin).eq("eFapsApp-Console");
             }
         };
-        tableProvider.init(cmd, fields, properties, oid);
+        tableProvider.init(cmd, fields, properties, targetMode, oid);
         return tableProvider;
     }
 
