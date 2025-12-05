@@ -22,7 +22,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.text.StringEscapeUtils;
-import org.efaps.admin.datamodel.Type;
 import org.efaps.admin.event.Parameter;
 import org.efaps.admin.event.Return;
 import org.efaps.admin.event.Return.ReturnValues;
@@ -35,8 +34,7 @@ import org.efaps.db.Insert;
 import org.efaps.eql.InvokerUtil;
 import org.efaps.eql.JSONCI;
 import org.efaps.eql.JSONData;
-import  org.efaps.eql.builder.Query;
-import  org.efaps.eql.builder.Where;
+import org.efaps.eql.builder.Query;
 import org.efaps.eql.stmt.ICIPrintStmt;
 import org.efaps.eql.stmt.ICIStmt;
 import org.efaps.eql.stmt.IEQLStmt;
@@ -188,22 +186,24 @@ public abstract class ExecuteEql_Base
 
     @Override
     public ITableProvider init(final AbstractUserInterfaceObject cmd,
-                                                final List<Field> fields,
-                                                final Map<String, String> properties,
-                                                final TargetMode targetMode,
-                                                final String oid)
+                               final List<Field> fields,
+                               final Map<String, String> properties,
+                               final TargetMode targetMode,
+                               final String oid)
         throws EFapsException
     {
         tableProvider = new StandardTableProvider()
         {
+
             @Override
-            public void addFilter(final Query query,
-                                  final Where where,
-                                  final List<Type> types)
+            protected Query evalQuery()
                 throws EFapsException
             {
+                final var query = super.evalQuery();
                 query.where().attribute(CICommon.HistoryEQL.Origin).eq("eFapsApp-Console");
+                return query;
             }
+
         };
         tableProvider.init(cmd, fields, properties, targetMode, oid);
         return tableProvider;
