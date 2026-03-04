@@ -25,6 +25,10 @@
         <name>Console_MyDesk_ExecuteEql</name>
         <target>
             <form>Console_ExecuteEqlForm</form>
+             <trigger event="UI_ACCESSCHECK" method="isNotRest"
+                name="Console_MyDesk_ExecuteEql.UI_ACCESSCHECK"
+                program="org.efaps.esjp.admin.access.AccessCheck4UI">
+            </trigger>
         </target>
         <property name="Target">modal</property>
         <property name="TargetMode">edit</property>
