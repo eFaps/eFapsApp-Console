@@ -189,7 +189,8 @@ public abstract class ExecuteEql_Base
                                final List<Field> fields,
                                final Map<String, String> properties,
                                final TargetMode targetMode,
-                               final String oid)
+                               final String oid,
+                               final List<String> selectedOids)
         throws EFapsException
     {
         tableProvider = new StandardTableProvider()
@@ -205,7 +206,7 @@ public abstract class ExecuteEql_Base
             }
 
         };
-        tableProvider.init(cmd, fields, properties, targetMode, oid);
+        tableProvider.init(cmd, fields, properties, targetMode, oid, selectedOids);
         return tableProvider;
     }
 
