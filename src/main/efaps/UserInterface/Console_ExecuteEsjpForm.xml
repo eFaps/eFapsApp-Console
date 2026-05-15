@@ -72,9 +72,7 @@
         <field name="parameters" character="Target">
             <property name="ModeCreate">EDITABLE</property>
             <table>Console_ParameterTable</table>
-            <evaluate program="org.efaps.esjp.common.uitable.MultiPrint">
-                <property name="Type">Admin_DataModel_Dimension</property>
-            </evaluate>
+            <evaluate program="org.efaps.esjp.ui.rest.provider.EmptyTableProvider"/>
         </field>
     </definition>
 </ui-form>

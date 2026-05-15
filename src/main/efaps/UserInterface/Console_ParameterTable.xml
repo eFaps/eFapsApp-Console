@@ -28,12 +28,13 @@
             <property name="ModeCreate">EDITABLE</property>
             <property name="UIProvider">org.efaps.admin.datamodel.ui.StringUI</property>
             <property name="Label">Console_ParameterTable.key.Label</property>
-
+            <property name="ValueType">INPUT</property>
         </field>
         <field name="valueField">
             <property name="ModeCreate">EDITABLE</property>
             <property name="UIProvider">org.efaps.admin.datamodel.ui.StringUI</property>
             <property name="Label">Console_ParameterTable.value.Label</property>
+             <property name="ValueType">INPUT</property>
         </field>
     </definition>
 </ui-table>
